@@ -1,0 +1,55 @@
+How to use WAMP + SSL to open localhost with HTTPS
+
+Step 1:
+	Download & install WAMP (Assuming that WAMP is installed in C: drive)
+		
+Step 2:
+	Download & install OpenSSL
+	
+Step 3:
+	Configure WAMP to use HTTP+SSL = HTTPS
+	
+Step 4:
+	
+	Path to openssl.exe : C:\wamp\bin\apache\apache2.4.9\bin\openssl.exe
+	Path to openssl.cnf : C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf
+	
+Step 5:
+
+	CMD in Path to openssl.exe :::
+	openssl genrsa -aes256 -out private.key 2048
+	openssl rsa -in private.key -out private.key
+	openssl req -new -x509 -nodes -sha1 -key private.key -out certificate.crt -days 36500 -config C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf
+
+	Now copy the privateKey & certificate into folder
+	
+Step 6:
+
+	Open httpd.conf & uncomment following
+	
+	LoadModule ssl_module modules/mod_ssl.so
+	Include conf/extra/httpd-ssl.conf
+	LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
+	
+	Open php.ini (wamp\bin\php\php5.5.12\php.ini)
+	extension=php_openssl.dll
+	
+Step 7:
+
+	C:/wamp/bin/apache/apache x.x.x/conf/extra/httpd-ssl.conf
+	<VirtualHost _default_:443> (Below this line check following parameters)
+	-------------------
+	DocumentRoot "C:/wamp/www"
+	ServerName localhost:443
+	ServerAdmin admin@example.com
+	ErrorLog "C:/wamp/bin/apache/apache2.4.9/logs/ssl_error.log"
+	TransferLog "C:/wamp/bin/apache/apache2.4.9/logs/ssl_access.log"
+	SSLCertificateFile "C:/wamp/bin/apache/apache2.4.9/conf/key/certificate.crt"
+	SSLCertificateKeyFile "C:/wamp/bin/apache/apache2.4.9/conf/key/private.key"
+	-------------------
+	
+Step 8:
+
+	httpd -t (To check the validity of file)
+
+
